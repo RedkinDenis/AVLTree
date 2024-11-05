@@ -1,5 +1,4 @@
 #include <iostream>
-#include "ANSI_colors.hpp"
 #include "tree.hpp"
 #include "benchmark.hpp"
 

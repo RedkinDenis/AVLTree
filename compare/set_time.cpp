@@ -1,6 +1,5 @@
 #include <iostream>
 #include <set>
-#include "ANSI_colors.hpp"
 #include "benchmark.hpp"
 
 int main()
