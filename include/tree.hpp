@@ -1,4 +1,6 @@
 #include <iostream>
+#include <istream>
+#include <sstream>
 
 template <typename KeyT>
 class AVLTree {
@@ -22,7 +24,6 @@ private:
         return node ? height(node->left) - height(node->right) : 0;
     }
 
-    // Обновить высоту узла
     void updateHeight(Node* node) {
         if (node) {
             node->height = 1 + std::max(height(node->left), height(node->right));
@@ -55,9 +56,8 @@ private:
         return y; 
     }
 
-    // Рекурсивная вставка
     Node* insert(Node* node, KeyT key) {
-        // Выполнить стандартную вставку
+
         if (!node) return new Node(key);
 
         if (key < node->key) {
@@ -65,13 +65,11 @@ private:
         } else if (key > node->key) {
             node->right = insert(node->right, key);
         } else {
-            return node; // Дубликаты не допускаются
+            return node;
         }
 
-        // Обновить высоту узла
         updateHeight(node);
 
-        // Проверка баланса
         int balanceFactor = balance(node);
 
         // Левый левый случай
@@ -96,15 +94,33 @@ private:
             return leftRotate(node);
         }
 
-        return node; // Возвращаем (неизмененный) указатель
+        return node;
     }
 
-    // Рекурсивный вывод дерева (инфиксный)
-    void inOrder(Node* node) {
+    void inOrder(Node* node, std::ostream &out = std::cout) {
         if (node) {
-            inOrder(node->left);
-            std::cout << node->key << " ";
-            inOrder(node->right);
+            inOrder(node->left, out);
+            out << node->key << " ";
+            inOrder(node->right, out);
+        }
+    }
+
+    int countInRange(Node* node, KeyT lower, KeyT upper) const {
+        if (!node) return 0;
+
+        // Если текущий узел находится в диапазоне, увеличиваем счетчик
+        if (node->key >= lower && node->key <= upper) {
+            return 1 + countInRange(node->left, lower, upper) + countInRange(node->right, lower, upper);
+        }
+
+        // Если текущий узел меньше нижней границы, ищем только в правом поддереве
+        else if (node->key < lower) {
+            return countInRange(node->right, lower, upper);
+        }
+
+        // Если текущий узел больше верхней границы, ищем только в левом поддереве
+        else {
+            return countInRange(node->left, lower, upper);
         }
     }
 
@@ -115,9 +131,32 @@ public:
         root = insert(root, key);
     }
 
-    // Инфиксный вывод дерева
-    void inOrder() {
-        inOrder(root);
-        std::cout << std::endl;
+    void inOrder(std::ostream &out = std::cout) {
+        inOrder(root, out);
+    }
+
+    int countInRange(KeyT lower, KeyT upper) const {
+        return countInRange(root, lower, upper);
+    }
+
+    void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
+        
+        char command = 0;
+        while (inp >> command) {
+            switch(command) {
+                case 'k': {
+                    KeyT key;
+                    inp >> key;
+                    insert(key);
+                    break;
+                }
+                case 'q': {
+                    KeyT low, up;
+                    inp >> low; inp >> up;
+                    out << countInRange(low, up) << ' ';
+                    break;
+                }
+            }
+        }
     }
 };
