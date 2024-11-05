@@ -1,6 +1,14 @@
 #include <iostream>
 #include <istream>
 #include <sstream>
+#include <typeinfo>
+
+#define CHECK_INPUT(var)                                                \
+if (!inp.good() && !inp.eof()) {                                        \
+    std::cerr << "Error input, need this as " << typeid(var).name();    \
+    exit(-1);                                                           \
+} 
+
 
 template <typename KeyT>
 class AVLTree {
@@ -72,23 +80,19 @@ private:
 
         int balanceFactor = balance(node);
 
-        // Левый левый случай
         if (balanceFactor > 1 && key < node->left->key) {
             return rightRotate(node);
         }
 
-        // Правый правый случай
         if (balanceFactor < -1 && key > node->right->key) {
             return leftRotate(node);
         }
 
-        // Левый правый случай
         if (balanceFactor > 1 && key > node->left->key) {
             node->left = leftRotate(node->left);
             return rightRotate(node);
         }
 
-        // Правый левый случай
         if (balanceFactor < -1 && key < node->right->key) {
             node->right = rightRotate(node->right);
             return leftRotate(node);
@@ -108,17 +112,14 @@ private:
     int countInRange(Node* node, KeyT lower, KeyT upper) const {
         if (!node) return 0;
 
-        // Если текущий узел находится в диапазоне, увеличиваем счетчик
         if (node->key >= lower && node->key <= upper) {
             return 1 + countInRange(node->left, lower, upper) + countInRange(node->right, lower, upper);
         }
 
-        // Если текущий узел меньше нижней границы, ищем только в правом поддереве
         else if (node->key < lower) {
             return countInRange(node->right, lower, upper);
         }
 
-        // Если текущий узел больше верхней границы, ищем только в левом поддереве
         else {
             return countInRange(node->left, lower, upper);
         }
@@ -143,20 +144,30 @@ public:
         
         char command = 0;
         while (inp >> command) {
+            CHECK_INPUT(command)
+            KeyT key, low, up;
+
             switch(command) {
-                case 'k': {
-                    KeyT key;
+                case 'k': 
                     inp >> key;
+                    CHECK_INPUT(key)
                     insert(key);
                     break;
-                }
-                case 'q': {
-                    KeyT low, up;
+                
+                case 'q': 
                     inp >> low; inp >> up;
-                    out << countInRange(low, up) << ' ';
+                    CHECK_INPUT(low);
+                    if (low < up)
+                        out << countInRange(low, up) << ' ';
                     break;
-                }
+                
+                default:
+                    std::cerr << "Error input, need command: \"k\" or \"q\"\n";
+                    exit(-1);
+                    break;
             }
         }
     }
 };
+
+#undef CHECK_INPUT

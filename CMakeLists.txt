@@ -44,3 +44,5 @@ add_executable(avltree.unit main.cpp)
 target_link_libraries(avltree.unit UNIT_TEST)
 target_link_libraries(avltree.unit ${GTEST_LIBRARIES} pthread)
 target_compile_definitions(avltree.unit PRIVATE UNIT_TESTING)
+
+add_subdirectory(compare)

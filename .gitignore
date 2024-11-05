@@ -23,3 +23,6 @@ build/CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c
 build/CMakeFiles/3.22.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
 build/avltree.unit
 build/avltree.test
+build/compare/cmp_avl
+build/compare/cmp_set
+build/compare/Makefile
