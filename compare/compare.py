@@ -3,8 +3,8 @@ import glob
 import subprocess
 import matplotlib.pyplot as plt
 
-cmp_avl_exe = "../build/compare/cmp_avl"
-cmp_set_exe = "../build/compare/cmp_set"
+cmp_avl_exe = "../build/compare/avl_bench"
+cmp_set_exe = "../build/compare/set_bench"
 
 files = list(map(str, glob.glob("bench/test_*.in")))
 files.sort()

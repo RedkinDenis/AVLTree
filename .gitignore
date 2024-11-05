@@ -26,3 +26,5 @@ build/avltree.test
 build/compare/cmp_avl
 build/compare/cmp_set
 build/compare/Makefile
+build/compare/avl_bench
+build/compare/set_bench
