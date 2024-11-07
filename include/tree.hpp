@@ -159,6 +159,8 @@ public:
                     CHECK_INPUT(low);
                     if (low <= up)
                         out << countInRange(low, up) << ' ';
+                    else 
+                        out << 0 << ' ';
                     break;
                 
                 default:
