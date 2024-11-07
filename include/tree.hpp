@@ -157,7 +157,7 @@ public:
                 case 'q': 
                     inp >> low; inp >> up;
                     CHECK_INPUT(low);
-                    if (low < up)
+                    if (low <= up)
                         out << countInRange(low, up) << ' ';
                     break;
                 
