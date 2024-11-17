@@ -1,33 +1,45 @@
 #include <iostream>
 #include <set>
 #include "benchmark.hpp"
+#include <chrono>
+
+void run (std::istream &inp = std::cin);
 
 int main()
 {
-    using clock = std::chrono::high_resolution_clock;
-    std::set<int> set;
+    using clock = std::chrono::high_resolution_clock;    
+    auto time_start = clock::now();
     
-    auto time_start = clock::now().time_since_epoch().count();
-    char command;
-    while(std::cin >> command) {
-        int lower, upper, answer;
-        switch (command) {
-            case 'k':
-                std::cin >> lower;
-                set.insert(lower);
-                break;
+    run();
 
-            case 'q':
-                std::cin >> lower >> upper;
-                if (lower < upper)
-                    answer = distance(set.lower_bound(lower), set.upper_bound(upper));
-                NO_OPT(answer);
-                break;
-        }
-    }
-    auto time_end = clock::now().time_since_epoch().count();
-    long double time = (static_cast<long double>(time_end - time_start)) * NSEC_TO_SEC;
+    auto time_end = clock::now();
+    auto time = std::chrono::duration<long double>(time_end - time_start).count();
     std::cout << time << "\n";
 
     return 0;
+}
+
+void run (std::istream &inp) {
+        
+    std::set<int> set;
+    char command = 0;
+    while (inp >> command) {
+        int key, low, up;
+
+        switch(command) {
+            case 'k': 
+                inp >> key;
+                set.insert(key);
+                break;
+            
+            case 'q': 
+                inp >> low; inp >> up;
+                break;
+            
+            default:
+                std::cerr << "Error input, need command: \"k\" or \"q\"\n";
+                exit(-1);
+                break;
+        }
+    }
 }

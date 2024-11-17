@@ -2,6 +2,7 @@
 #include <istream>
 #include <sstream>
 #include <typeinfo>
+#include <vector>
 
 #define CHECK_INPUT(var)                                                \
 if (!inp.good() && !inp.eof()) {                                        \
@@ -20,22 +21,22 @@ private:
         int height;
 
         Node(KeyT value) : key(value), left(nullptr), right(nullptr), height(1) {}
+
+        void updateHeight() {
+            int leftHeight = left ? left->height : 0;
+            int rightHeight = right ? right->height : 0;
+            height = 1 + std::max(leftHeight, rightHeight);
+        }
     };
 
     Node* root;
 
-    int height(Node* node) {
+    static int height(Node* node) { 
         return node ? node->height : 0;
     }
 
-    int balance(Node* node) {
+    static int balance(Node* node) {
         return node ? height(node->left) - height(node->right) : 0;
-    }
-
-    void updateHeight(Node* node) {
-        if (node) {
-            node->height = 1 + std::max(height(node->left), height(node->right));
-        }
     }
 
     Node* rightRotate(Node* y) {
@@ -45,8 +46,8 @@ private:
         x->right = y;
         y->left = T2;
 
-        updateHeight(y);
-        updateHeight(x);
+        y->updateHeight();
+        x->updateHeight();
 
         return x; 
     }
@@ -58,8 +59,8 @@ private:
         y->left = x;
         x->right = T2;
 
-        updateHeight(x);
-        updateHeight(y);
+        x->updateHeight();
+        y->updateHeight();
 
         return y; 
     }
@@ -76,7 +77,8 @@ private:
             return node;
         }
 
-        updateHeight(node);
+        // updateHeight(node);
+        node->updateHeight();
 
         int balanceFactor = balance(node);
 
@@ -101,10 +103,10 @@ private:
         return node;
     }
 
-    void inOrder(Node* node, std::ostream &out = std::cout) {
+    void inOrder(Node* node, std::vector<KeyT> &out) {
         if (node) {
             inOrder(node->left, out);
-            out << node->key << " ";
+            out.push_back(node->key);
             inOrder(node->right, out);
         }
     }
@@ -132,44 +134,48 @@ public:
         root = insert(root, key);
     }
 
-    void inOrder(std::ostream &out = std::cout) {
+    std::vector<KeyT> inOrder() {
+        std::vector<KeyT> out;
         inOrder(root, out);
+        return out;
     }
 
     int countInRange(KeyT lower, KeyT upper) const {
         return countInRange(root, lower, upper);
     }
+};
 
-    void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
+template <typename KeyT>
+void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
         
-        char command = 0;
-        while (inp >> command) {
-            CHECK_INPUT(command)
-            KeyT key, low, up;
+    AVLTree<KeyT> tree;
+    char command = 0;
+    while (inp >> command) {
+        CHECK_INPUT(command)
+        KeyT key, low, up;
 
-            switch(command) {
-                case 'k': 
-                    inp >> key;
-                    CHECK_INPUT(key)
-                    insert(key);
-                    break;
-                
-                case 'q': 
-                    inp >> low; inp >> up;
-                    CHECK_INPUT(low);
-                    if (low <= up)
-                        out << countInRange(low, up) << ' ';
-                    else 
-                        out << 0 << ' ';
-                    break;
-                
-                default:
-                    std::cerr << "Error input, need command: \"k\" or \"q\"\n";
-                    exit(-1);
-                    break;
-            }
+        switch(command) {
+            case 'k': 
+                inp >> key;
+                CHECK_INPUT(key)
+                tree.insert(key);
+                break;
+            
+            case 'q': 
+                inp >> low; inp >> up;
+                CHECK_INPUT(low);
+                if (low <= up)
+                    out << tree.countInRange(low, up) << ' ';
+                else 
+                    out << 0 << ' ';
+                break;
+            
+            default:
+                std::cerr << "Error input, need command: \"k\" or \"q\"\n";
+                exit(-1);
+                break;
         }
     }
-};
+}
 
 #undef CHECK_INPUT

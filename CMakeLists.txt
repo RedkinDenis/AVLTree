@@ -9,24 +9,20 @@ find_package(GTest REQUIRED)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
-SET(SRCS
-    src/tree.cpp
-)
+add_library(tree INTERFACE)
 
-add_library(tree STATIC ${SRCS})
+target_include_directories(tree INTERFACE ${INCLUDE_DIR})
 
-target_include_directories(tree PUBLIC ${INCLUDE_DIR})
+add_library(TEST INTERFACE)
 
-add_library(TEST STATIC ${SRCS})
-
-target_include_directories(TEST PUBLIC ${GTEST_INCLUDE_DIRS})
-target_include_directories(TEST PUBLIC ${INCLUDE_DIR})
+target_include_directories(TEST INTERFACE ${GTEST_INCLUDE_DIRS})
+target_include_directories(TEST INTERFACE ${INCLUDE_DIR})
 
 
-add_library(UNIT_TEST STATIC ${SRCS})
+add_library(UNIT_TEST INTERFACE)
 
-target_include_directories(UNIT_TEST PUBLIC ${GTEST_INCLUDE_DIRS})
-target_include_directories(UNIT_TEST PUBLIC ${INCLUDE_DIR})
+target_include_directories(UNIT_TEST INTERFACE ${GTEST_INCLUDE_DIRS})
+target_include_directories(UNIT_TEST INTERFACE ${INCLUDE_DIR})
 
 
 add_executable(avltree.x main.cpp)                                                         

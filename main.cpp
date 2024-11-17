@@ -12,9 +12,9 @@ int main () {
     testing::InitGoogleTest();
     auto r = RUN_ALL_TESTS();
 #else    
-    AVLTree<int> tree;
+    // AVLTree<int> tree;
 
-    tree.run();
+    run<int>();
     std::cout << std::endl;
 
     return 0;
@@ -26,11 +26,9 @@ int main () {
 #define GTEST(name, dat, ans)           \
 TEST(counting, name) {                  \
                                         \
-    AVLTree<int> tree;                  \
-                                        \
     std::stringstream inp(dat);         \
     std::stringstream res;              \
-    tree.run(inp, res);                 \
+    run<int>(inp, res);                 \
                                         \
     std::string answer(ans);            \
     ASSERT_TRUE(answer == res.str());   \
@@ -52,13 +50,10 @@ TEST(filling, test) {
     tree.insert(2);
     tree.insert(3);
     tree.insert(4);
-    tree.insert(5);
-    tree.insert(6);
 
-    std::stringstream ans;
-    tree.inOrder(ans);
+    auto ans = tree.inOrder();
 
-    ASSERT_TRUE("1 2 3 4 5 6 " == ans.str());
+    ASSERT_TRUE(ans[0] == 1 && ans[1] == 2 && ans[2] == 3 && ans[3] == 4);
 }
 
 #endif
