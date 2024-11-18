@@ -3,12 +3,14 @@
 #include <sstream>
 #include <typeinfo>
 #include <vector>
+#include <string>
 
-#define CHECK_INPUT(var)                                                \
-if (!inp.good() && !inp.eof()) {                                        \
-    std::cerr << "Error input, need this as " << typeid(var).name();    \
-    exit(-1);                                                           \
-} 
+#define CHECK_INPUT(var)                            \
+if (!inp.good() && !inp.eof()) {                    \
+    std::string str1("Error input, need this as "); \
+    std::string str2(typeid(var).name());           \
+    throw std::runtime_error(str1 + str2);          \
+}
 
 
 template <typename KeyT>
@@ -145,10 +147,9 @@ public:
     }
 };
 
+namespace {
 template <typename KeyT>
-void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
-        
-    AVLTree<KeyT> tree;
+void doCommand (AVLTree<KeyT> &tree, std::istream &inp, std::ostream &out) {
     char command = 0;
     while (inp >> command) {
         CHECK_INPUT(command)
@@ -171,9 +172,24 @@ void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
                 break;
             
             default:
-                std::cerr << "Error input, need command: \"k\" or \"q\"\n";
-                exit(-1);
-                break;
+                throw std::runtime_error("Error input, need command: \"k\" or \"q\"");
+        }
+    }
+}
+}
+
+template <typename KeyT>
+void run (std::istream &inp = std::cin, std::ostream &out = std::cout) {
+
+    AVLTree<KeyT> tree;
+    while (true) {
+
+        try {
+            doCommand(tree, inp, out);
+            return;
+        }
+        catch (const std::exception &ex) {
+            std::cout << ex.what() << std::endl;
         }
     }
 }
